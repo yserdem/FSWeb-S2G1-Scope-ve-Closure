@@ -72,7 +72,7 @@ Not: Bu fonskiyon, aşağıdaki diğer görevler için de bir callback fonksiyon
 
 function takimSkoru(){
     let score = 0;
-    score = Math.ceil(Math.random() * 3 + 15);
+    score = Math.ceil(Math.random() * 10 + 15);
     return score;
 }
 
@@ -180,15 +180,13 @@ function skorTabelasi(periyotSkoru, takimSkoru, ceyrekSayisi) {
   for ( let i = 0; i < Infinity; i++ ) {
     if (currentScoreAway !== currentScoreHome) {
       console.log("Maç Sonucu: Ev Sahibi " + currentScoreHome.toString() + " - Konuk Takım " + currentScoreAway.toString());
-      break;
+      return myArray;
     }
     myArray.push(periyotSkoru(takimSkoru));
     currentScoreHome = currentScoreHome + myArray[i + ceyrekSayisi]["EvSahibi"];
     currentScoreAway = currentScoreAway + myArray[i + ceyrekSayisi]["KonukTakim"];
     console.log((i+1).toString() + ". Uzatma: Ev Sahibi " + myArray[i + ceyrekSayisi]["EvSahibi"].toString() + " - Konuk Takım " + myArray[i + ceyrekSayisi]["KonukTakim"].toString());   
   }
-
-  return myArray;
 }
 
 skorTabelasi(periyotSkoru, takimSkoru, 3)
