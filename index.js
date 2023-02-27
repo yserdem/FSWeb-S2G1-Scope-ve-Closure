@@ -1,5 +1,7 @@
 //README DOSYASINDAKİ ADIMLARI TAKİP ETTİKTEN SONRA AŞAĞIDAKİLERİ YAPINIZ
 
+const { transform } = require("@babel/core");
+
 // Başlangıç Challenge'ı
 
 /**Örnek Görev: İlkini Dön
@@ -30,10 +32,14 @@ console.log('örnek görev:', ilkiniDon(['as','sa'],function(metin){return metin
   Aşağıdaki skor1 ve skor2 kodlarını inceleyiniz ve aşağıdaki soruları altına not alarak cevaplayın
   
   1. skor1 ve skor2 arasındaki fark nedir?
-  
+  skor1 her fonksiyon çağırılışında lokal skoru 0'a eşitler ve sonrasında 1 artırır. skor2 globalde bir skor değeri tutar ve her fonksiyon çağırılında budeğeri 1 artırır.
+
   2. Hangisi bir closure kullanmaktadır? Nasıl tarif edebilirsin? (yarınki derste öğreneceksin :) )
-  
+  skor1 closure kullanır.
+
   3. Hangi durumda skor1 tercih edilebilir? Hangi durumda skor2 daha mantıklıdır?
+  skor değişkenine erişimi kısıtlamak istediğimiz durumlarda skor1 tercih edilebilir. skor değişkenini her 
+  çağırışta artırmak istediğimiz ve ya harici fonksiyonlarda kullanmak istediğimiz durumlarda skor2 tercih edilebilir.
 */
 
 // skor1 kodları
@@ -64,11 +70,11 @@ Aşağıdaki takimSkoru() fonksiyonununda aşağıdakileri yapınız:
 Not: Bu fonskiyon, aşağıdaki diğer görevler için de bir callback fonksiyonu olarak da kullanılacak
 */
 
-function takimSkoru(/*Kodunuzu buraya yazınız*/){
-    /*Kodunuzu buraya yazınız*/
+function takimSkoru(){
+    let score = 0;
+    score = Math.ceil(Math.random() * 3 + 15);
+    return score;
 }
-
-
 
 
 /* Görev 3: macSonucu() 
@@ -86,9 +92,20 @@ Aşağıdaki macSonucu() fonksiyonununda aşağıdakileri yapınız:
 }
 */ 
 
-function macSonucu(/*Kodunuzu buraya yazınız*/){
-  /*Kodunuzu buraya yazınız*/
+function macSonucu(takimSkoru,ceyrekSayisi) {
+  let scoreHome = 0;
+  let scoreAway = 0;
+
+  for (let i = 0; i < ceyrekSayisi; i++) {
+    scoreHome = scoreHome + takimSkoru();
+    scoreAway = scoreAway + takimSkoru(); 
+  }
+  return {
+    "EvSahibi": scoreHome,
+    "KonukTakim": scoreAway
+  }
 }
+macSonucu(takimSkoru,5)
 
 
 
@@ -109,9 +126,11 @@ Aşağıdaki periyotSkoru() fonksiyonununda aşağıdakileri yapınız:
   */
 
 
-function periyotSkoru(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
-
+function periyotSkoru(takimSkoru) {
+  return {
+    "EvSahibi": takimSkoru(),
+    "KonukTakim": takimSkoru()
+  }
 }
 
 
@@ -146,11 +165,33 @@ MAÇ UZAR ise skorTabelasi(periyotSkoru,takimSkoru,4)
 ] */
 // NOTE: Bununla ilgili bir test yoktur. Eğer logladığınız sonuçlar yukarıdakine benziyor ise tmamlandı sayabilirsiniz.
 
-function skorTabelasi(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
+function skorTabelasi(periyotSkoru, takimSkoru, ceyrekSayisi) {
+  let myArray = [];
+  let currentScoreHome = 0;
+  let currentScoreAway = 0;
+
+  for (let i = 0; i < ceyrekSayisi; i++) {
+    myArray.push(periyotSkoru(takimSkoru));
+    currentScoreHome = currentScoreHome + myArray[i]["EvSahibi"];
+    currentScoreAway = currentScoreAway + myArray[i]["KonukTakim"];
+    console.log((i+1).toString() + ". Periyot: Ev Sahibi " + myArray[i]["EvSahibi"].toString() + " - Konuk Takım " + myArray[i]["KonukTakim"].toString());        
+  }
+
+  for ( let i = 0; i < Infinity; i++ ) {
+    if (currentScoreAway !== currentScoreHome) {
+      console.log("Maç Sonucu: Ev Sahibi " + currentScoreHome.toString() + " - Konuk Takım " + currentScoreAway.toString());
+      break;
+    }
+    myArray.push(periyotSkoru(takimSkoru));
+    currentScoreHome = currentScoreHome + myArray[i + ceyrekSayisi]["EvSahibi"];
+    currentScoreAway = currentScoreAway + myArray[i + ceyrekSayisi]["KonukTakim"];
+    console.log((i+1).toString() + ". Uzatma: Ev Sahibi " + myArray[i + ceyrekSayisi]["EvSahibi"].toString() + " - Konuk Takım " + myArray[i + ceyrekSayisi]["KonukTakim"].toString());   
+  }
+
+  return myArray;
 }
 
-
+skorTabelasi(periyotSkoru, takimSkoru, 3)
 
 
 /* Aşağıdaki satırları lütfen değiştirmeyiniz*/
